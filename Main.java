@@ -4,12 +4,12 @@ Enunciado del ejercicio:
 Consigna:
 Crear un programa en Java que simule un menú de gestión de artículos en consola.
 El menú debe tener las siguientes 6 opciones:
-1-Crear un artículo nuevo
-2-Consultar un artículo
-3-Listar artículos
-4-Modificar un artículo
+1-Crear un artículo nuevo  FUNCA!
+2-Consultar un artículo    FUNCA!
+3-Listar artículos         FUNCA!
+4-Modificar un artículo    FUNCA!
 5-Borrar un artículo
-6-Salir
+6-Salir                    FUNCA!
 El programa debe funcionar de la siguiente manera:
 Mostrar el menú de opciones.
 Solicitar al usuario que ingrese un número correspondiente a la opción deseada.
@@ -21,14 +21,11 @@ Utilizar Scanner para capturar la entrada del usuario.
 */
 
 
-import java.awt.*;
+
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
-
-import static Business.Articulo.listadoArticulos;
-
 public class Main {
+    static ArrayList<Articulo> listadoArticulos = new ArrayList<>();
     public static void main(String[] args) {
         Saludar();
         Menu();
@@ -46,7 +43,9 @@ public class Main {
         System.out.println("3 - Listar artículos");
         System.out.println("4 - Modificar un artículo");
         System.out.println("5 - Borrar un artículo");
-        System.out.println("6 - Salir");
+        System.out.println("6 - Crear un pedido");
+        System.out.println("7 - Consultar un pedido");
+        System.out.println("8 - Salir");
         opcion = sc.nextInt();
         sc.nextLine();
 
@@ -55,18 +54,22 @@ public class Main {
                 CrearArticulo();
                 break;
             case 2:
-                Articulo.ConsultarArticulo();
+                ConsultarArticulo();
                 break;
             case 3:
-                Articulo.ListarArticulos();
+                ListarArticulos();
                 break;
             case 4:
-                Articulo.ModificarArticulo();
+                ModificarArticulo();
                 break;
             case 5:
-                Articulo.BorrarArticulo();
+                BorrarArticulo();
                 break;
             case 6:
+            case 7:
+                Mensaje();
+                break;
+            case 8:
                 Despedida();
                 break;
             default:
@@ -74,6 +77,8 @@ public class Main {
         }
         }
     }
+
+    //Métodos CRUD Artículos
     public static void CrearArticulo(){
         Scanner sc = new Scanner(System.in);
         System.out.println("Ingrese el ID del artículo: ");
@@ -87,13 +92,121 @@ public class Main {
         double precio = sc.nextDouble();
         sc.nextLine();
 
+
         listadoArticulos.add(new Articulo(id, nombre, descripcion, precio));
         System.out.println("El artículo fué creado con éxito!");
+    }
+    public static void ConsultarArticulo(){
+        if(!chequearArticulos()){
+            for (Articulo elemento: listadoArticulos) {
+                System.out.println("ID: " + elemento.getId() + ", " + "Nombre: " + elemento.getNombre());
+            }
+        }
+        else{
+            validarArticulos();
+        }
+    }
+    public static void ListarArticulos(){
+        if(!chequearArticulos()){
+            for (Articulo elemento: listadoArticulos) {
+                System.out.println("ID: " + elemento.getId());
+                System.out.println("Nombre: " + elemento.getNombre());
+                System.out.println("Descripción: " + elemento.getDescripcion());
+                System.out.println("Precio: " + elemento.getPrecio());
+            }
+        } else{
+            validarArticulos();
+        }
+    }
+    public static void ModificarArticulo(){
+        if(!chequearArticulos()){
+            Scanner sc = new Scanner(System.in);
+            System.out.println("Ingrese ID del artículo a modificar: ");
+            int id = sc.nextInt();
+            for (Articulo a: listadoArticulos){
+                if(a.getId() == id){
+                    sc.nextLine();
+                    System.out.println("Ingrese un nuevo nombre: ");
+                    a.setNombre(sc.nextLine());
+                    System.out.println("Ingrese una nueva descripción: ");
+                    a.setDescripcion(sc.nextLine());
+                    System.out.println("Ingrese un nuevo precio:");
+                    a.setPrecio(sc.nextDouble());
+                    System.out.println("El artículo fué modificado correctamente.");
+                    return;
+                }
+            }
+            sc.close();
+        }
+        else{
+            validarArticulos();
+        }
+
+    }
+    public static void BorrarArticulo(){
+        if(!chequearArticulos()){
+            try{
+                Scanner sc = new Scanner(System.in);
+                System.out.println("Ingrese ID del artículo a eliminar: ");
+                int id = sc.nextInt();
+                sc.nextLine();
+                for (Articulo elemento: listadoArticulos) {
+                    if(elemento.getId()==id){
+                        listadoArticulos.removeIf(articulo -> articulo.getId()==id);
+                        System.out.println("El artículo fué removido con éxito.");}
+                    else{
+                    System.out.println("No se encontró el artículo solicitado.");
+                }
+            }
+            sc.close();
+        } catch(Exception e){
+                System.out.println(e.getMessage());
+            }
+        }
+        else{
+            validarArticulos();
+        }
+    }
+
+    /*public static void BorrarArticulo() {
+        if (!chequearArticulos()) {
+            try (Scanner sc = new Scanner(System.in)) {
+                System.out.print("Ingrese ID del artículo a eliminar: ");
+                if (sc.hasNextInt()) {
+                    int id = sc.nextInt();
+                    boolean eliminado = listadoArticulos.removeIf(articulo -> articulo.getId() == id);
+
+                    if (eliminado) {
+                        System.out.println("El artículo ha sido eliminado exitosamente.");
+                    } else {
+                        System.out.println("No se encontró un artículo con el ID proporcionado.");
+                    }
+                } else {
+                    System.out.println("ID inválido. Por favor, ingrese un número.");
+                }
+            }
+        }
+        else{
+            validarArticulos();
+        }
+    }
+*/
+
+    //Artículos vacio
+    public static boolean chequearArticulos() {
+        return listadoArticulos.isEmpty();
+    }
+    public static void validarArticulos(){
+        if(!chequearArticulos())
+            System.out.println("Encontramos un artículo!");
+        else
+            System.out.println("No existen artículos");
     }
     public static void Despedida(){
         System.out.println("La aplicación se cerrará, nos vemos pronto.");
     }
-
-
-
+    public static void Mensaje(){
+        System.out.println("*** En construcción ***");
+        System.out.println("No funca aún jeje.");
+    }
 }
